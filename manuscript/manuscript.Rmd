@@ -1,9 +1,11 @@
 ---
-title: "Avocado Prices by Region"
+title: "Avocado Prices by Region in the U.S."
 subtitle: "BIOS 7400 Spring 2025 Final Project"
 author: "Murphy John"
 date: "`r Sys.Date()`"
 output: word_document
+bibliography: bib/avocado-prices.bib
+csl: bib/ieee.csl
 ---
 
 ```{r setup, include=FALSE}
@@ -12,9 +14,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Dataset
 
-The avocado, also known as the alligator pear, is an evergreen tree native to the Americas and was first domesticated in Mesoamerica over 5,000 years ago [Wikipedia]. It likely originated in the highlands of south-central Mexico and Guatemala [Wikipedia]. The fruit, commonly referred to simply as "avocado", is a large berry containing a single seed or “pit” [Wikipedia]. Today, avocados are cultivated in tropical and Mediterranean climates across many countries [Wikipedia]. As of 2023, Mexico is the world’s leading producer, accounting for 29% of the global harvest of 10.4 million tonnes [Wikipedia]. In the United States, California dominates production with 88%, followed by Florida (12%) and Hawaii (less than 1%) [askifas].
+The avocado, also known as the alligator pear, is an evergreen tree native to the Americas and was first domesticated in Mesoamerica over 5,000 years ago @noauthor_avocado_2025. It likely originated in the highlands of south-central Mexico and Guatemala @j_morton_avocado_nodate @uc_riverside_avocado_2023 @chen_tracing_2009. The fruit, commonly referred to simply as "avocado", is a large berry containing a single seed or “pit” @uc_riverside_avocado_2023. Today, avocados are cultivated in tropical and Mediterranean climates across many countries @j_morton_avocado_nodate. As of 2023, Mexico is the world’s leading producer, accounting for 29% of the global harvest of 10.4 million tonnes @noauthor_faostat_nodate. In the United States, California dominates production with 88%, followed by Florida (12%) and Hawaii (less than 1%) @noauthor_faostat_nodate.
 
-Avocados have become a global dietary staple, prized for their creamy texture and nutritional value. Global production has more than tripled since 2000, rising from 6 billion pounds to 19 billion pounds in 2021 (FAOSTAT 2023). U.S. consumption has followed this upward trend, especially since the early 2000s [askifas]. As health-conscious eating grows in popularity, tracking avocado pricing trends has become important for both consumers and industry stakeholders.
+Avocados have become a global dietary staple, prized for their creamy texture and nutritional value. Global production has more than tripled since 2000, rising from 6 billion pounds to 19 billion pounds in 2021 @noauthor_faostat_nodate. U.S. consumption has followed this upward trend @noauthor_fe1150fe1150_nodate. As health-conscious eating grows in popularity, tracking avocado pricing trends has become important for both consumers and industry stakeholders.
 
 This report analyzes weekly Hass avocado prices from 2015 to mid-2018 across various U.S. regions. It also incorporates global temperature change data from NASA and includes the political party of the U.S. president during this period.
 
@@ -24,9 +26,9 @@ All data processing and analysis for this report was generated using SAS softwar
 
 ## Avocado Data
 
-The primary dataset used in this project was sourced from Kaggle and originates from the Hass Avocado Board. It includes weekly average prices for Hass avocados across U.S. regions from January 2015 to March 2018, with distinctions between conventional and organic types. In this analysis, average price is treated as the outcome variable, while month, year, region, and avocado type serve as predictors.
+The primary dataset used in this project was sourced from Kaggle and originates from the Hass Avocado Board @noauthor_avocado_nodate. It includes weekly average prices for Hass avocados across U.S. regions from January 2015 to March 2018, with distinctions between conventional and organic types. In this analysis, average price is treated as the outcome variable, while month, year, region, and avocado type serve as predictors.
 
-The raw data is imported into SAS using the `PROC IMPORT` procedure, creating a dataset named `raw_avo`. The `GUESSINGROWS=MAX` option ensures accurate detection of data types by examining all rows.
+The raw data was imported into SAS using the `PROC IMPORT` procedure, creating a dataset named `raw_avo`. The `GUESSINGROWS=MAX` option ensures accurate detection of data types by examining all rows.
 
 Data preprocessing occurs in the `clean_avo` data step. Selected variables are renamed for clarity, and the date field is parsed to extract month and year, which are reformatted to align with monthly temperature data. A new month variable is created with the `STRIP` and `PROPCASE` functions, and the original date is standardized to the first of the month using `MDY`. Using the `IF THEN` statement, the data is filtered to retain only relevant U.S. regions. An unused variable (`VAR1`) is removed using `DROP`.
 
@@ -34,7 +36,7 @@ Next, `PROC SQL` aggregates the data by year, month, region, and avocado type us
 
 ## Temperature Data
 
-Global climate change can impact the environmental conditions essential for agriculture, including temperature, which may influence crop yields and market prices. Based on this, we hypothesize that temperature is a meaningful predictor of average avocado prices. To explore this relationship, we use Northern Hemisphere monthly temperature anomaly data from NASA, which reports how much each month's average temperature deviates from a 1951–1980 average baseline. These anomalies, rather than absolute temperatures, provide insight into warming trends over time.
+Global climate change can impact the environmental conditions essential for agriculture, including temperature, which may influence crop yields and market prices. Based on this, we hypothesize that temperature is a meaningful predictor of average avocado prices. To explore this relationship, we use Northern Hemisphere monthly temperature anomaly data from NASA @gistemp_team_giss_nodate, which reports how much each month's average temperature deviates from a 1951–1980 average baseline. These anomalies, rather than absolute temperatures, provide insight into warming trends over time.
 
 The accompanying SAS code reads and processes this raw temperature data for analysis. A `FILENAME` reference (`raw_temp`) is assigned to the text file containing the anomaly values. Using absolute pointer control and `IF THEN`, the code inspects each line and filters out any non-numeric rows. For valid entries, it extracts the year and monthly anomaly values using named `INPUT`.
 
@@ -53,13 +55,13 @@ The merged dataset is temporarily stored in the work library, then saved permane
 # Analysis
 
 ## Exploratory
-The analysis began with the setup of necessary libraries, enabling of graphics output using `ODS`, and sorting of the merged dataset by avocado type, date, and region with `PROC SORT`. We use `PROC SGPANEL` to visualize trends in avocado pricing over time and across various factors. Figure 1 shows a time-series plot of average price by avocado type and region. The temporal patterns suggest that both factors influence pricing trends. Boxplots stratified by political party (pres_party) and region indicated some variation in average prices under different presidential administrations, while scatterplots of price versus temperature revealed a weak to moderate relationship depending on the avocado type and region.
+The analysis begins with the setup of necessary libraries, enabling of graphics output using `ODS`, and sorting of the merged dataset by avocado type, date, and region with `PROC SORT`. We use `PROC SGPANEL` to visualize trends in avocado pricing over time and across various factors. Figure 1 shows a time-series plot of average price by avocado type and region. The temporal patterns suggest that both factors influence pricing trends. Boxplots stratified by political party (pres_party) and region indicated some variation in average prices under different presidential administrations, while scatterplots of price versus temperature revealed a weak to moderate relationship depending on the avocado type and region.
 
-```{r fig1, echo=FALSE, fig.cap="Figure 1: Time series of avocado prices per month by type and region.", out.width="80%"}
+```{r fig1, echo=FALSE, fig.cap="Figure 1: Time series of avocado prices per month by type and region.", out.width="75%"}
 knitr::include_graphics(here::here("figures/fig1.png"))
 ```
 
-We use `PROC UNIVARIATE` to compute summary statistics on mean prices by avocado type. `PROC CORR PEASRON` reveals a negative Pearson correlation between average price and temperature, with little variation by type. Using a `MACRO` and `PROC MEANS`, additional mean comparisons were performed for categorical variables including year, month, region, and president's party. Table 1 shows the resulting descriptive statistics of avocado prices by region, stratified by type.
+We use `PROC UNIVARIATE` to compute summary statistics on mean prices by avocado type. `PROC CORR PEASRON` reveals a negative Pearson correlation between average price and temperature, with little variation by type. Using a `MACRO` and `PROC MEANS`, additional mean comparisons were performed for categorical variables including year, month, region, and presidential party. Table 1 shows the resulting descriptive statistics of avocado prices by region, stratified by type. In all regions, the mean prices for organic avocados are higher than those for conventional avocados. Further, the SouthCentral region has the lowest mean across both avocado types and the Northest has the highest.
 
 ```{r tab1, echo=FALSE, fig.cap="Table 1: Descriptive statistics of avocado prices by region and type.", out.width="70%"}
 knitr::include_graphics(here::here("figures/tab1.png"))
@@ -67,17 +69,17 @@ knitr::include_graphics(here::here("figures/tab1.png"))
 
 ## Model Fits
 
-The modeling phase began with data splitting. Using `PROC SURVEYSELECT`, `IF THEN`, `ELSE`, and `OUTPUT`, 80% of the dataset was allocated to training and the remaining 20% reserved for testing. `PROC GLM` fit a simple linear regression using avocado type as a predictor. This baseline model had an RMSE of 0.251 and R-squared of 0.486, indicating moderate explanatory power. Subsequent bivariable models were fit with a `MACRO` and incorporate both main effects and interaction terms between type and additional covariates. Among these, the model including region as a covariate yielded the best performance (RMSE = 0.203, R-squared = 0.673), suggesting strong regional influences on price. Other covariates considered in the bivariable analysis included temperature, year, presidential party, and month. Table 2 reports all RMSE and R-squared metrics of the baseline and bivariable models. All bivariable models improved the fit as measured by RMSE and R-squared compared to the "Type only" univariable baseline.
+The modeling phase began with data splitting. Using `PROC SURVEYSELECT`, `IF THEN`, `ELSE`, and `OUTPUT`, 80% of the dataset was allocated to training and the remaining 20% reserved for testing. `PROC GLM` fit a simple linear regression using avocado type as a predictor. This baseline model had an RMSE of 0.251 and R-squared of 0.486, indicating moderate explanatory power. Subsequent bivariable models were fit with `MACRO` and incorporate both main effects and two-way interaction terms between type and the additional covariate. Among these, the model including region as a covariate yielded the best performance (RMSE = 0.203, R-squared = 0.673), suggesting strong regional influences on price. Other covariates considered in the bivariable analysis included temperature, year, presidential party, and month. Table 2 reports all RMSE and R-squared metrics of the baseline and bivariable models. All bivariable models improved the fit as measured by RMSE and R-squared compared to the "Type only" univariable baseline.
 
 ```{r tab2, echo=FALSE, fig.cap="Table 2: RMSE and R-Squared values for bivariable regression models by second predictor", out.width="50%"}
 knitr::include_graphics(here::here("figures/tab2.png"))
 ```
 
-Next, a full model incorporating all covariates and their two-way interactions with type was fit with `PROC GLM`. This model showed substantial improvement in fit (RMSE = 0.145, R-squared = 0.845), but it included several interaction terms with weak statistical support, as assessed by interaction plots. A reduced model excluding the unnecessary interactions was fit. This model achieved a very similar fit (RMSE = 0.161, R-squared = 0.796), but with improved parsimony, making it the preferred final model. The final model includes type, temperature, region, presidential party, month, year, type-region interaction, and type-year interaction.
+Next, a full model incorporating all covariates and their two-way interactions with type was fit with `PROC GLM`. This model showed substantial improvement in fit (RMSE = 0.145, R-squared = 0.845), but it included several interaction terms with weak statistical support, as assessed by interaction plots. A reduced model excluding the unnecessary interactions was fit. This model achieved a very similar fit (RMSE = 0.152, R-squared = 0.823), but with improved parsimony, making it the preferred final model. The final model includes type, temperature, region, presidential party, month, year, and type-region interaction.
 
-Model evaluation on the withheld test data confirmed the reduced model’s robustness. Predictions were generated on the test data using `PROC PLM`, and residuals were calculated. Figure 2 shows the model predictions versus the observed values in the test data. Final performance metrics showed the reduced model maintained high explanatory power on unseen data, with a test RMSE of 0.150 and R-squared of 0.816. These results support the conclusion that avocado prices are strongly influenced by type, region, time (year and month), temperature, and political context.
+Model evaluation on the withheld test data confirmed the reduced model’s robustness. Predictions were generated on the test data using `PROC PLM`, and residuals were calculated. Figure 2 shows the model predictions versus the observed values in the test data. Final performance metrics showed the reduced model maintained high explanatory power on unseen data, with a test RMSE of 0.133 and R-squared of 0.854. These results support the conclusion that avocado prices are strongly influenced by type, region, time (year and month), temperature, and political context.
 
-```{r fig2, echo=FALSE, fig.cap="Figure 2: Model predictions versus observed test data", out.width="60%"}
+```{r fig2, echo=FALSE, fig.cap="Figure 2: Model predictions versus observed test data", out.width="70%"}
 knitr::include_graphics(here::here("figures/fig2.png"))
 ```
 
@@ -85,5 +87,5 @@ knitr::include_graphics(here::here("figures/fig2.png"))
 
 The generalized linear model demonstrated strong performance in predicting avocado prices based on type, temperature, region, time, and presidential party. Notably, the region variable emerged as the most influential predictor, as evidenced by the bivariable analysis. These findings provide insights into the factors that drive avocado pricing. Future work could include forecasting methods, such as ARIMA models and exponential smoothing for predicting future avocado prices. By utilizing such methods, this research could offer a more comprehensive understanding of price trends over time, benefiting both consumers and industry stakeholders.
 
-
+# References
 
