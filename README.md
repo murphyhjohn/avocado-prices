@@ -6,8 +6,12 @@ This project is for Research Data Management Computing (BIOS 7400) at the Univer
 
 ## Description of Contents
 
-`code` contains all SAS code files used for data cleaning and analysis. See additional documentation in that folder.
+`assignment` contains the assignment instructions.
 
-`data` contains the raw an processed data used in this project. See additional documentation in that folder for more details.
+`data/raw` contains the raw data used in this project.
+
+`figures` contains .png files of the figures and tables (had to be saved as png from SAS) that are included in the final manuscript.
+
+`submission-files` contains all files that were submitted for the assignment including SAS code used for data cleaning and analysis.
 
 `manuscript` contains the final manuscript file.
